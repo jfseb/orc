@@ -98,7 +98,10 @@ public class Driver {
     Configuration conf = new Configuration();
     Properties confSettings = options.genericOptions.getOptionProperties("D");
     for(Map.Entry pair: confSettings.entrySet()) {
-      conf.set(pair.getKey().toString(), pair.getValue().toString());
+      String arr[] = pair.getKey().toString().split("=");
+      if (arr.length > 1) {
+          conf.set(arr[0], arr[1] );
+      }
     }
     if ("meta".equals(options.command)) {
       FileDump.main(conf, options.commandArgs);
