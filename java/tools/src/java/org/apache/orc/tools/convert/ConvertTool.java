@@ -35,10 +35,15 @@ import org.apache.orc.TypeDescription;
 import org.apache.orc.Writer;
 import org.apache.orc.tools.json.JsonSchemaFinder;
 
+import com.google.common.base.Charsets;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
@@ -177,7 +182,16 @@ public class ConvertTool {
     CommandLine opts = parseOptions(args);
     fileList = buildFileList(opts.getArgs(), conf);
     if (opts.hasOption('s')) {
-      this.schema = TypeDescription.fromString(opts.getOptionValue('s'));
+      String schemaopts = opts.getOptionValue('s');
+      if(schemaopts.startsWith("struct<")) {
+    	 this.schema = TypeDescription.fromString(schemaopts);
+      } else {    	  
+    	  // schema is a filename.
+     	 byte[] encoded = Files.readAllBytes(Paths.get(schemaopts));
+    	 String schematext = new String(encoded, "UTF-8");
+    	 schematext = schematext.replaceAll("\\s+","");  	 
+    	 this.schema = TypeDescription.fromString(schematext);    	  
+      }
     } else {
       this.schema = buildSchema(fileList, conf);
     }

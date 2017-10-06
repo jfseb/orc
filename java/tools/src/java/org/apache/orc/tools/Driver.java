@@ -78,7 +78,6 @@ public class Driver {
 
   public static void main(String[] args) throws Exception {
     DriverOptions options = new DriverOptions(args);
-
     if (options.command == null) {
       System.err.println("ORC Java Tools");
       System.err.println();
